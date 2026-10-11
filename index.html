@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Partage de position</title>
+</head>
+<body>
+  <h2>Partage de position et caméra</h2>
+  <p>Choisissez ce que vous souhaitez partager.</p>
+
+  <button onclick="position()">Partager ma position</button>
+  <p id="resultat"></p>
+
+  <button onclick="camera()">Activer ma caméra</button>
+  <video id="video" autoplay playsinline
+    style="width:100%;max-width:400px"></video>
+
+  <script>
+    function position() {
+      if (!navigator.geolocation) {
+        document.getElementById('resultat').textContent =
+          'Géolocalisation non disponible.';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        p => {
+          const lat = p.coords.latitude;
+          const lon = p.coords.longitude;
+          document.getElementById('resultat').innerHTML =
+            'Latitude : ' + lat + '<br>Longitude : ' + lon +
+            '<br><a target="_blank" rel="noopener" href="https://www.google.com/maps?q='
+            + lat + ',' + lon + '">Voir sur Google Maps</a>';
+        },
+        () => {
+          document.getElementById('resultat').textContent =
+            'Autorisation refusée ou position indisponible.';
+        }
+      );
+    }
+
+    async function camera() {
+      try {
+        const flux = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false
+        });
+        document.getElementById('video').srcObject = flux;
+      } catch (e) {
+        alert('Caméra indisponible ou autorisation refusée.');
+      }
+    }
+  </script>
+</body>
+</html>
